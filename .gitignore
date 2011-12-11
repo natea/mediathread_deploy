@@ -1,0 +1,4 @@
+*.pyc
+.DS_Store
+mediathread/
+mediathread_orig/
