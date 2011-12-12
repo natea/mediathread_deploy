@@ -2,9 +2,15 @@ name: mediathread
 
 mem: 64M
 
+instances: 1
+ 
+framework:
+    type: python
+    runtime: python27
+    
 env:
-  DJANGO_SETTINGS_MODULE: mediathread.settings
-  PYTHONPATH: /app/app/mediathread
+    DJANGO_SETTINGS_MODULE: mediathread.settings
+    PYTHONPATH: /app/app/mediathread
   
 hooks:
   post-staging:
@@ -19,4 +25,5 @@ services:
   
 ignores: 
   - .git
+  - .pyc
   - mediathread/mediathread.db
