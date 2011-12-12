@@ -8,18 +8,49 @@ Get the MediaThread code and submodules::
 	$ git submodule init
 	$ git submodule update
 
-Deploy it::
+Add to your mediathread/deploy_specific/settings.py::
 
-	$ stackato target api.stackato.local
-	$ stackato login   (you will have had to register a user first)
-	$ stackato push -n
+    EXTRA_INSTALLED_APPS = (
+            'django_stackato',
+            )
 
-Subsequent deploys::
+    # ## Pull in CloudFoundry's production settings
+    if 'VCAP_SERVICES' in os.environ:
+        import json
+        vcap_services = json.loads(os.environ['VCAP_SERVICES'])
+        # XXX: avoid hardcoding here
+    #    srv = vcap_services['postgresql-8.4'][0]
+        srv = vcap_services['mysql-5.1'][0]
+        cred = srv['credentials']
+        DATABASES = {
+            'default': {
+    #            'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+                'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+                'NAME': cred['name'],                      # Or path to database file if using sqlite3.
+                'USER': cred['user'],                      # Not used with sqlite3.
+                'PASSWORD': cred['password'],                  # Not used with sqlite3.
+                'HOST': cred['hostname'],                      # Set to empty string for localhost. Not used with sqlite3.
+                'PORT': cred['port'],                      # Set to empty string for default. Not used with sqlite3.
+                }
+            } 
+    else:   
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+                'NAME': 'mediathread',                      # Or path to database file if using sqlite3.
+                'USER': '',                      # Not used with sqlite3.
+                'PASSWORD': '',                  # Not used with sqlite3.
+                'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
+                'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+                }
+            }
 
-	$ stackato update -n
+**Note:** You'll need to make a file `__init__.py` in the `deploy_specific dir` in order for the files to be loaded.    
 
-Login to MediaThread::
+Try it out!
+-----------
 
-	Point browser at http://mediathread.stackato.local
+Login to MediaThread by pointing your browser at http://mediathread.stackato.local and use these login credentials (can be changed in stackato.yml)::
+
 	un: admin
 	pw: secret123
