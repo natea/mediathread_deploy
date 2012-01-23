@@ -15,8 +15,8 @@ env:
 hooks:
   post-staging:
     - python mediathread/manage.py syncdb --noinput
-    # - python manage.py migrate --noinput
-    - python mediathread/manage.py createsuperuser --username=admin --email=admin@mydomain.com --noinput
+    - python mediathread/manage.py migrate --noinput
+    - python mediathread/manage.py createsuperuser --username=admin --email=r.trebor.scholz@gmail.com --noinput
     - python mediathread/manage.py changepassword2 admin secret123
 
 services:
